@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <title>お薬チェック</title>
+
+  <!-- iOS PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="お薬チェック">
+  <meta name="theme-color" content="#f48fb1">
+
+  <!-- Home screen icon (emoji-based SVG data URI) -->
+  <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIj48cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgcng9IjQwIiBmaWxsPSIjZjQ4ZmIxIi8+PHRleHQgeD0iOTAiIHk9IjEyNSIgZm9udC1zaXplPSIxMDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfkoo8L3RleHQ+PC9zdmc+">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      /* iOS safe areas */
+      --sat: env(safe-area-inset-top, 0px);
+      --sab: env(safe-area-inset-bottom, 0px);
+      --sal: env(safe-area-inset-left, 0px);
+      --sar: env(safe-area-inset-right, 0px);
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      background: linear-gradient(160deg, #fce4ec 0%, #f3e5f5 50%, #e8eaf6 100%);
+      font-family: -apple-system, 'Hiragino Maru Gothic ProN', 'Hiragino Sans', sans-serif;
+      padding-bottom: calc(40px + var(--sab));
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+      overscroll-behavior: none;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #f48fb1 0%, #ce93d8 100%);
+      padding: calc(20px + var(--sat)) 20px 18px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(244,143,177,0.3);
+    }
+    .header-icon { font-size: 32px; margin-bottom: 2px; }
+    .header h1 { color: white; font-size: 22px; font-weight: 800; text-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .header .date { color: rgba(255,255,255,0.9); font-size: 13px; margin-top: 4px; }
+
+    /* Sections */
+    .section { padding: 14px 16px 0; }
+
+    /* Progress card */
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 16px 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .progress-label span:first-child { color: #888; font-size: 13px; }
+    .progress-count { color: #f48fb1; font-weight: bold; font-size: 15px; }
+    .progress-bar-bg {
+      height: 14px;
+      background: #fce4ec;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #f48fb1, #ce93d8);
+      border-radius: 10px;
+      transition: width 0.4s ease;
+    }
+    .all-done-msg { text-align: center; }
+    .all-done-msg .emoji { font-size: 48px; }
+    .all-done-msg p { color: #f48fb1; font-weight: bold; font-size: 17px; margin-top: 6px; }
+
+    /* Patch card */
+    .patch-card {
+      border-radius: 20px;
+      padding: 16px 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      border: 2px solid transparent;
+      transition: all 0.3s;
+    }
+    .patch-card.needs-change {
+      background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+      border-color: #ffb74d;
+    }
+    .patch-card.ok { background: white; }
+    .patch-row { display: flex; align-items: center; gap: 12px; }
+    .patch-icon-box {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #ffe082, #ffb74d);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .patch-info { flex: 1; }
+    .patch-info .name { font-weight: bold; color: #555; font-size: 15px; }
+    .patch-info .sub { font-size: 12px; color: #888; margin-top: 2px; }
+    .patch-info .alert { font-size: 12px; margin-top: 2px; }
+    .patch-info .alert.warn { color: #e65100; font-weight: bold; }
+    .patch-btn {
+      padding: 10px 16px;
+      border-radius: 14px;
+      border: none;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+      min-height: 44px;
+    }
+    .patch-btn.active {
+      background: linear-gradient(135deg, #ffb74d, #ffa726);
+      color: white;
+      box-shadow: 0 3px 12px rgba(255,183,77,0.4);
+    }
+    .patch-btn.active:active { transform: scale(0.95); opacity: 0.9; }
+    .patch-btn.done { background: #e8e8e8; color: #aaa; }
+    .patch-next-info {
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: #fff8e1;
+      border-radius: 12px;
+      font-size: 13px;
+      color: #f57c00;
+    }
+
+    /* Time slot */
+    .slot-card {
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      border: 2px solid transparent;
+      transition: all 0.3s;
+    }
+    .slot-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .slot-title { font-size: 18px; font-weight: bold; color: #555; }
+    .done-badge {
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: 12px;
+      font-weight: bold;
+      color: white;
+      display: none;
+      animation: popIn 0.3s ease;
+    }
+    @keyframes popIn {
+      0% { transform: scale(0); }
+      70% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+
+    /* Med item - touch optimized */
+    .med-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: white;
+      border: 2px solid #f0f0f0;
+      border-radius: 16px;
+      padding: 14px 14px;
+      cursor: pointer;
+      width: 100%;
+      text-align: left;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      transition: all 0.15s ease;
+      margin-bottom: 10px;
+      min-height: 56px; /* iOS touch target */
+      -webkit-appearance: none;
+      appearance: none;
+      font-family: inherit;
+    }
+    .med-item:last-child { margin-bottom: 0; }
+    .med-item:active { transform: scale(0.97); opacity: 0.85; }
+    .med-item.checked { border-color: var(--accent); background: var(--light-accent, #fafafa); }
+    .med-icon-box {
+      width: 44px; height: 44px;
+      border-radius: 13px;
+      background: #f5f5f5;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .med-item.checked .med-icon-box {
+      background: var(--accent);
+      color: white;
+      font-size: 18px;
+    }
+    .med-text { flex: 1; }
+    .med-name { font-weight: bold; color: #444; font-size: 16px; transition: all 0.2s; }
+    .med-item.checked .med-name { color: var(--accent); text-decoration: line-through; }
+    .med-detail { font-size: 12px; color: #aaa; margin-top: 2px; }
+    .med-check {
+      width: 28px; height: 28px;
+      border-radius: 9px;
+      border: 2.5px solid #ddd;
+      background: white;
+      display: flex; align-items: center; justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 15px;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .med-item.checked .med-check {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+
+    /* Note */
+    .note {
+      text-align: center;
+      color: #bbb;
+      font-size: 11px;
+      padding: 20px 16px 0;
+    }
+
+    /* iOS install banner */
+    .install-banner {
+      margin: 14px 16px 0;
+      padding: 14px 16px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      font-size: 13px;
+      color: #666;
+      line-height: 1.6;
+      display: none;
+    }
+    .install-banner .close-banner {
+      float: right;
+      background: none;
+      border: none;
+      font-size: 18px;
+      color: #bbb;
+      cursor: pointer;
+      padding: 0 4px;
+      line-height: 1;
+    }
+    .install-banner b { color: #555; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-icon">💊</div>
+  <h1>お薬チェック</h1>
+  <p class="date" id="today-date"></p>
+</div>
+
+<!-- Install banner -->
+<div class="install-banner" id="install-banner">
+  <button class="close-banner" onclick="closeBanner()">×</button>
+  📲 <b>ホーム画面に追加</b>できます！<br>
+  下の共有ボタン <span style="font-size:16px">⎙</span> → 「ホーム画面に追加」で<br>
+  アプリのように毎日使えます
+</div>
+
+<!-- Progress -->
+<div class="section">
+  <div class="card" id="progress-card">
+    <div id="progress-normal">
+      <div class="progress-label">
+        <span>今日の進捗</span>
+        <span class="progress-count" id="progress-text">0 / 7 完了</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+    <div id="all-done-msg" class="all-done-msg" style="display:none">
+      <div class="emoji">🎉</div>
+      <p>今日のお薬、全部完了！えらい！</p>
+    </div>
+  </div>
+</div>
+
+<!-- Patch -->
+<div class="section">
+  <div class="patch-card ok" id="patch-card">
+    <div class="patch-row">
+      <div class="patch-icon-box">🩹</div>
+      <div class="patch-info">
+        <div class="name">貼り薬（シール）</div>
+        <div class="sub">2日に1回張り替え</div>
+        <div class="alert" id="patch-alert"></div>
+      </div>
+      <button class="patch-btn active" id="patch-btn" onclick="handlePatchChange()">張り替えた！</button>
+    </div>
+    <div id="patch-next-info" style="display:none" class="patch-next-info"></div>
+  </div>
+</div>
+
+<!-- 6:30 -->
+<div class="section">
+  <div class="slot-card" id="slot-slot_0630"
+    style="background: linear-gradient(135deg, #fff0f5 0%, #ffe8f0 100%); --accent: #f48fb1">
+    <div class="slot-header">
+      <span class="slot-title">🌸 6:30</span>
+      <span class="done-badge" id="badge-slot_0630" style="background:#f48fb1">✓ 完了</span>
+    </div>
+    <div>
+      <button class="med-item" style="--accent:#f48fb1; --light-accent:#fce4ec" id="med-kb41_am"
+        onclick="toggleMed('kb41_am','slot_0630')">
+        <div class="med-icon-box"><span class="icon">🌿</span></div>
+        <div class="med-text">
+          <div class="med-name">クラシエKB-41</div>
+          <div class="med-detail">漢方薬</div>
+        </div>
+        <div class="med-check"></div>
+      </button>
+      <button class="med-item" style="--accent:#f48fb1; --light-accent:#fce4ec" id="med-tsumura117_am"
+        onclick="toggleMed('tsumura117_am','slot_0630')">
+        <div class="med-icon-box"><span class="icon">🍃</span></div>
+        <div class="med-text">
+          <div class="med-name">ツムラ117</div>
+          <div class="med-detail">漢方薬</div>
+        </div>
+        <div class="med-check"></div>
+      </button>
+      <button class="med-item" style="--accent:#f48fb1; --light-accent:#fce4ec" id="med-tsumura126"
+        onclick="toggleMed('tsumura126','slot_0630')">
+        <div class="med-icon-box"><span class="icon">🌱</span></div>
+        <div class="med-text">
+          <div class="med-name">ツムラ126</div>
+          <div class="med-detail">漢方薬</div>
+        </div>
+        <div class="med-check"></div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 10:00 -->
+<div class="section">
+  <div class="slot-card" id="slot-slot_1000"
+    style="background: linear-gradient(135deg, #fffde7 0%, #fff8e1 100%); --accent: #ffb74d">
+    <div class="slot-header">
+      <span class="slot-title">☀️ 10:00</span>
+      <span class="done-badge" id="badge-slot_1000" style="background:#ffb74d">✓ 完了</span>
+    </div>
+    <div>
+      <button class="med-item" style="--accent:#ffb74d; --light-accent:#fff3e0" id="med-levocetirizine"
+        onclick="toggleMed('levocetirizine','slot_1000')">
+        <div class="med-icon-box"><span class="icon">💊</span></div>
+        <div class="med-text">
+          <div class="med-name">レボセチリジン</div>
+          <div class="med-detail">錠剤</div>
+        </div>
+        <div class="med-check"></div>
+      </button>
+      <button class="med-item" style="--accent:#ffb74d; --light-accent:#fff3e0" id="med-thyradin75"
+        onclick="toggleMed('thyradin75','slot_1000')">
+        <div class="med-icon-box"><span class="icon">💊</span></div>
+        <div class="med-text">
+          <div class="med-name">チラーヂン75</div>
+          <div class="med-detail">錠剤</div>
+        </div>
+        <div class="med-check"></div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 15:00 -->
+<div class="section">
+  <div class="slot-card" id="slot-slot_1500"
+    style="background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%); --accent: #ce93d8">
+    <div class="slot-header">
+      <span class="slot-title">🌿 15:00</span>
+      <span class="done-badge" id="badge-slot_1500" style="background:#ce93d8">✓ 完了</span>
+    </div>
+    <div>
+      <button class="med-item" style="--accent:#ce93d8; --light-accent:#f3e5f5" id="med-kb41_pm"
+        onclick="toggleMed('kb41_pm','slot_1500')">
+        <div class="med-icon-box"><span class="icon">🌿</span></div>
+        <div class="med-text">
+          <div class="med-name">クラシエKB-41</div>
+          <div class="med-detail">漢方薬</div>
+        </div>
+        <div class="med-check"></div>
+      </button>
+      <button class="med-item" style="--accent:#ce93d8; --light-accent:#f3e5f5" id="med-tsumura117_pm"
+        onclick="toggleMed('tsumura117_pm','slot_1500')">
+        <div class="med-icon-box"><span class="icon">🍃</span></div>
+        <div class="med-text">
+          <div class="med-name">ツムラ117</div>
+          <div class="med-detail">漢方薬</div>
+        </div>
+        <div class="med-check"></div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<p class="note">毎日0時に自動リセットされます</p>
+
+<script>
+  // ===== Data persistence =====
+  const STORAGE_KEY = 'medicine_check_data';
+  const PATCH_DAYS = 2;
+  const TOTAL = 7;
+
+  const slots = {
+    slot_0630: ['kb41_am', 'tsumura117_am', 'tsumura126'],
+    slot_1000: ['levocetirizine', 'thyradin75'],
+    slot_1500: ['kb41_pm', 'tsumura117_pm'],
+  };
+
+  const icons = {
+    kb41_am: '🌿', tsumura117_am: '🍃', tsumura126: '🌱',
+    levocetirizine: '💊', thyradin75: '💊',
+    kb41_pm: '🌿', tsumura117_pm: '🍃'
+  };
+
+  function todayStr() {
+    return new Date().toISOString().slice(0, 10);
+  }
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const saved = JSON.parse(raw);
+        // Auto-reset if it's a new day
+        if (saved.date === todayStr()) {
+          return saved;
+        }
+        // New day: keep patch info, reset meds
+        return {
+          date: todayStr(),
+          checked: {},
+          patchLastChanged: saved.patchLastChanged || null,
+        };
+      }
+    } catch (e) {}
+    return { date: todayStr(), checked: {}, patchLastChanged: null };
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {}
+  }
+
+  const state = loadState();
+
+  // ===== Date display =====
+  document.getElementById('today-date').textContent = new Date().toLocaleDateString('ja-JP', {
+    year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
+  });
+
+  // ===== Helpers =====
+  function addDays(d, n) {
+    const r = new Date(d); r.setDate(r.getDate() + n); return r;
+  }
+  function formatDate(d) { return `${d.getMonth()+1}月${d.getDate()}日`; }
+  function today() {
+    const d = new Date(); d.setHours(0,0,0,0); return d;
+  }
+
+  // ===== Toggle medicine =====
+  function toggleMed(id, slot) {
+    state.checked[id] = !state.checked[id];
+    renderMed(id);
+    updateProgress();
+    updateSlotBadge(slot);
+    saveState();
+  }
+
+  function renderMed(id) {
+    const el = document.getElementById('med-' + id);
+    const iconBox = el.querySelector('.med-icon-box');
+    const check = el.querySelector('.med-check');
+
+    if (state.checked[id]) {
+      el.classList.add('checked');
+      iconBox.textContent = '✓';
+      check.textContent = '✓';
+    } else {
+      el.classList.remove('checked');
+      iconBox.textContent = icons[id];
+      check.textContent = '';
+    }
+  }
+
+  // ===== Progress =====
+  function updateProgress() {
+    const checkedCount = Object.values(state.checked).filter(Boolean).length;
+    const pct = Math.round((checkedCount / TOTAL) * 100);
+
+    document.getElementById('progress-text').textContent = `${checkedCount} / ${TOTAL} 完了`;
+    document.getElementById('progress-fill').style.width = pct + '%';
+
+    const allMedsDone = Object.keys(icons).every(id => state.checked[id]);
+    const patchOk = isPatchOk();
+    if (allMedsDone && patchOk) {
+      document.getElementById('progress-normal').style.display = 'none';
+      document.getElementById('all-done-msg').style.display = 'block';
+    } else {
+      document.getElementById('progress-normal').style.display = 'block';
+      document.getElementById('all-done-msg').style.display = 'none';
+    }
+  }
+
+  function updateSlotBadge(slot) {
+    const done = slots[slot].every(id => state.checked[id]);
+    const badge = document.getElementById('badge-' + slot);
+    badge.style.display = done ? 'inline-block' : 'none';
+    const slotEl = document.getElementById('slot-' + slot);
+    const colors = { slot_0630: '#f48fb1', slot_1000: '#ffb74d', slot_1500: '#ce93d8' };
+    slotEl.style.borderColor = done ? colors[slot] : 'transparent';
+  }
+
+  // ===== Patch =====
+  function isPatchOk() {
+    if (!state.patchLastChanged) return false;
+    const lastChanged = new Date(state.patchLastChanged);
+    return lastChanged.toDateString() === today().toDateString();
+  }
+
+  function handlePatchChange() {
+    const t = today();
+    state.patchLastChanged = t.toISOString();
+    saveState();
+
+    renderPatch();
+    updateProgress();
+  }
+
+  function renderPatch() {
+    const btn = document.getElementById('patch-btn');
+    const card = document.getElementById('patch-card');
+    const alertEl = document.getElementById('patch-alert');
+    const nextInfo = document.getElementById('patch-next-info');
+    const t = today();
+
+    if (!state.patchLastChanged) {
+      // First time
+      card.className = 'patch-card needs-change';
+      alertEl.className = 'alert warn';
+      alertEl.textContent = '⚠️ 今日は張り替えの日です！';
+      btn.textContent = '張り替えた！';
+      btn.className = 'patch-btn active';
+      btn.onclick = handlePatchChange;
+      nextInfo.style.display = 'none';
+      return;
+    }
+
+    const lastChanged = new Date(state.patchLastChanged);
+    const nextChange = addDays(lastChanged, PATCH_DAYS);
+    const changedToday = lastChanged.toDateString() === t.toDateString();
+    const needsChange = nextChange <= t;
+
+    if (changedToday) {
+      card.className = 'patch-card ok';
+      alertEl.textContent = '';
+      btn.textContent = '✓ 完了';
+      btn.className = 'patch-btn done';
+      btn.onclick = null;
+      nextInfo.innerHTML = `次の張り替えは <strong>${formatDate(nextChange)}</strong> です 📅`;
+      nextInfo.style.display = 'block';
+    } else if (needsChange) {
+      card.className = 'patch-card needs-change';
+      alertEl.className = 'alert warn';
+      alertEl.textContent = '⚠️ 今日は張り替えの日です！';
+      btn.textContent = '張り替えた！';
+      btn.className = 'patch-btn active';
+      btn.onclick = handlePatchChange;
+      nextInfo.style.display = 'none';
+    } else {
+      card.className = 'patch-card ok';
+      alertEl.className = 'alert';
+      alertEl.textContent = `次の張り替え：${formatDate(nextChange)}`;
+      btn.textContent = '張り替えた！';
+      btn.className = 'patch-btn active';
+      btn.onclick = handlePatchChange;
+      nextInfo.style.display = 'none';
+    }
+  }
+
+  // ===== Install banner (iOS Safari only) =====
+  function showInstallBanner() {
+    const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent);
+    const isStandalone = window.navigator.standalone === true;
+    const dismissed = localStorage.getItem('banner_dismissed');
+    if (isIOS && !isStandalone && !dismissed) {
+      document.getElementById('install-banner').style.display = 'block';
+    }
+  }
+  function closeBanner() {
+    document.getElementById('install-banner').style.display = 'none';
+    localStorage.setItem('banner_dismissed', '1');
+  }
+
+  // ===== Initialize =====
+  (function init() {
+    // Restore checked states
+    Object.keys(icons).forEach(id => {
+      if (state.checked[id]) renderMed(id);
+    });
+    Object.keys(slots).forEach(slot => updateSlotBadge(slot));
+    renderPatch();
+    updateProgress();
+    showInstallBanner();
+  })();
+</script>
+</body>
+</html>
