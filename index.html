@@ -11,14 +11,27 @@
   <meta name="apple-mobile-web-app-title" content="お薬チェック">
   <meta name="theme-color" content="#f48fb1">
 
-  <!-- Home screen icon (PNG) -->
-  <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAE5klEQVR4nO3dPU4cWxCG4ZqRs2EX3oMlMudIRuzErATvBGGJ3BmS9+CA2CnEOMCNev56+vQ53VX1zftk1r1AB6+/W7SvzMqCeLl7ePN+Bkx3cXu98n4GMzO3hyBgbV6BL/pFifg8LRn37F+IiNE3d9yzfXJCxpC5wm7+SQkZJVqHvW75yYgZJVo30+R3ByGjhRZrXb3QxIxWWrRUFTQxo7XapiZNPCFjCVNOkOKFJmYsZUprRUETM5ZW2tzooIkZXkraa/oeGvA2KmjWGd7GNngyaGJGFGNaHAyamBHNqSa5oSHlaNCsM6IaavNg0MSM6I41yckBKXtBs87I4lCrLDSkbAXNOiOb3WZZaEghaEj5CJpzA1n122WhIYWgIWVtxrmB/LqGWWhIIWhIIWhIWXE/QwkLDSkEDSkEDSkEDSkEDSkEDSkEDSkEDSkEDSkEDSkEDSkEDSkEDSkEDSkEDSkEDSkEDSkEDSkEDSkEDSkEDSkEDSmfvB9gCZvv37wfwez5r/cTbHm9f/J+hFlIBh0i4OA2N5dbv1YJXCZoIq7TBZ497PRBE3Jb/eXOGHfaoLOF/OfXbzMz+/z1i/OTjLe5uUwXdcq3HNlizmxzc7l3b0eWaqEJ2U+WtU6z0MTsL8NSpwiamOOIHnX4oIk5nshRh76hJ8b8OPDPriY+CnZEvanDBl0Y81DEx/494q4UMeqQJ0dBzI82PuaWH4v/op0f4YIujLkFoq4UKepwQQM1QgXtsM5zfb6zE2WlwwTN67n8IkQdJmighRBBT1jn1q/ceIUnIkTQ0OF9drgHXXE7t1pV1lmIe9CVrmx6kDUfiwGeKx32j74L9cPk/+U4Y65Bz/SqjmjPWPaTA9hC0JiF1x1N0JDiFjR/1I05sNCQQtCQQtCQQtCQQtCQQtCQQtCQQtCQ4hb064+fXl8awlhoSCFozMLrL3EkaEhxDZo7Gq2x0JBC0GjO8y9Bdw+aswMtuQcNLd4/oiJE0Kw0WgkRNNBKmKBZ6fy8zw2zQEGbEXVmEWI2CxY0UCtc0Kx0PlHW2Sxg0GZEnUmkmM2CBm1G1BlEi9kscNBmRB1ZxJjNggdtRtQRRY3ZLEHQZkQdSeSYzZIEbUbUEUSP2SxR0GbvURO2jwwxmyULukPUy3m9f0oTs5nZ6uXu4c37IWqk+UkAz3+9n6BYppA76X9OYbfWacIOLmPEfemD7vTPEOIulz3kjkzQfbs3NoHvUwl4l2TQu/gm8nykfMsBHEPQkELQkELQkELQkELQkELQkELQkELQkELQkELQkELQkELQkELQkELQkELQkELQkELQkELQkELQkELQkELQkLK+uL1eeT8E0MLF7fWKhYYUgoYUgoaUtdn77eH9IECNrmEWGlIIGlI+gubsQFb9dlloSCFoSNkKmrMD2ew2y0JDyl7QrDSyONQqCw0pB4NmpRHdsUaPLjRRI6qhNjk5IGUwaFYa0Zxq8uRCEzWiGNPiqJODqOFtbIPc0JAyOmhWGl5K2itaaKLG0kqbKz45iBpLmdJaVZwvdw9vNR8PHFIzmlXfFLLWaK22qeq3HESNVlq01DRGThBM0XIUm76HZq1RqnUzswXIWmPIXOM3+6ISNvrm/q/4oicCcZ+nJU9Rt5uXuLV5fT8V5ps4As8tyguBf+FCW+JMUtzJAAAAAElFTkSuQmCC">
+  <!-- Home screen icon (generated via canvas) -->
+  <link rel="apple-touch-icon" id="app-icon" href="">
+  <script>
+  (function(){
+    var c=document.createElement('canvas');c.width=180;c.height=180;
+    var g=c.getContext('2d');
+    g.fillStyle='#f48fb1';g.beginPath();g.roundRect(0,0,180,180,40);g.fill();
+    var px=30,py=58,pw=120,ph=64,pr=ph/2;
+    g.fillStyle='#ffffff';g.beginPath();g.roundRect(px,py,pw,ph,pr);g.fill();
+    g.fillStyle='#ffe0ea';g.beginPath();g.roundRect(px+pw/2,py,pw/2,ph,pr);g.fill();
+    g.fillRect(px+pw/2,py,pr,ph);
+    g.strokeStyle='#dca0b4';g.lineWidth=2;g.beginPath();g.moveTo(90,py+4);g.lineTo(90,py+ph-4);g.stroke();
+    g.fillStyle='rgba(255,255,255,0.7)';g.beginPath();g.ellipse(px+25,py+16,10,6,0,0,Math.PI*2);g.fill();
+    document.getElementById('app-icon').href=c.toDataURL('image/png');
+  })();
+      </script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     html {
-      /* iOS safe areas */
       --sat: env(safe-area-inset-top, 0px);
       --sab: env(safe-area-inset-bottom, 0px);
       --sal: env(safe-area-inset-left, 0px);
@@ -38,7 +51,6 @@
       overscroll-behavior: none;
     }
 
-    /* Header */
     .header {
       background: linear-gradient(135deg, #f48fb1 0%, #ce93d8 100%);
       padding: calc(20px + var(--sat)) 20px 18px;
@@ -49,10 +61,8 @@
     .header h1 { color: white; font-size: 22px; font-weight: 800; text-shadow: 0 1px 3px rgba(0,0,0,0.1); }
     .header .date { color: rgba(255,255,255,0.9); font-size: 13px; margin-top: 4px; }
 
-    /* Sections */
     .section { padding: 14px 16px 0; }
 
-    /* Progress card */
     .card {
       background: white;
       border-radius: 20px;
@@ -83,7 +93,6 @@
     .all-done-msg .emoji { font-size: 48px; }
     .all-done-msg p { color: #f48fb1; font-weight: bold; font-size: 17px; margin-top: 6px; }
 
-    /* Patch card */
     .patch-card {
       border-radius: 20px;
       padding: 16px 20px;
@@ -137,7 +146,6 @@
       color: #f57c00;
     }
 
-    /* Time slot */
     .slot-card {
       border-radius: 20px;
       padding: 16px;
@@ -167,7 +175,6 @@
       100% { transform: scale(1); }
     }
 
-    /* Med item - touch optimized */
     .med-item {
       display: flex;
       align-items: center;
@@ -182,7 +189,7 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.04);
       transition: all 0.15s ease;
       margin-bottom: 10px;
-      min-height: 56px; /* iOS touch target */
+      min-height: 56px;
       -webkit-appearance: none;
       appearance: none;
       font-family: inherit;
@@ -225,7 +232,6 @@
       background: var(--accent);
     }
 
-    /* Note */
     .note {
       text-align: center;
       color: #bbb;
@@ -233,7 +239,6 @@
       padding: 20px 16px 0;
     }
 
-    /* iOS install banner */
     .install-banner {
       margin: 14px 16px 0;
       padding: 14px 16px;
@@ -266,15 +271,13 @@
   <p class="date" id="today-date"></p>
 </div>
 
-<!-- Install banner -->
 <div class="install-banner" id="install-banner">
   <button class="close-banner" onclick="closeBanner()">×</button>
   📲 <b>ホーム画面に追加</b>できます！<br>
-  下の共有ボタン <span style="font-size:16px">⎙</span> → 「ホーム画面に追加」で<br>
+  下の共有ボタン <span style="font-size:16px">⏙</span> → 「ホーム画面に追加」で<br>
   アプリのように毎日使えます
 </div>
 
-<!-- Progress -->
 <div class="section">
   <div class="card" id="progress-card">
     <div id="progress-normal">
@@ -293,7 +296,6 @@
   </div>
 </div>
 
-<!-- Patch -->
 <div class="section">
   <div class="patch-card ok" id="patch-card">
     <div class="patch-row">
@@ -309,7 +311,6 @@
   </div>
 </div>
 
-<!-- 6:30 -->
 <div class="section">
   <div class="slot-card" id="slot-slot_0630"
     style="background: linear-gradient(135deg, #fff0f5 0%, #ffe8f0 100%); --accent: #f48fb1">
@@ -349,7 +350,6 @@
   </div>
 </div>
 
-<!-- 10:00 -->
 <div class="section">
   <div class="slot-card" id="slot-slot_1000"
     style="background: linear-gradient(135deg, #fffde7 0%, #fff8e1 100%); --accent: #ffb74d">
@@ -380,7 +380,6 @@
   </div>
 </div>
 
-<!-- 15:00 -->
 <div class="section">
   <div class="slot-card" id="slot-slot_1500"
     style="background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%); --accent: #ce93d8">
@@ -414,7 +413,6 @@
 <p class="note">毎日0時に自動リセットされます</p>
 
 <script>
-  // ===== Data persistence =====
   const STORAGE_KEY = 'medicine_check_data';
   const PATCH_DAYS = 2;
   const TOTAL = 7;
@@ -440,11 +438,9 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const saved = JSON.parse(raw);
-        // Auto-reset if it's a new day
         if (saved.date === todayStr()) {
           return saved;
         }
-        // New day: keep patch info, reset meds
         return {
           date: todayStr(),
           checked: {},
@@ -463,21 +459,18 @@
 
   const state = loadState();
 
-  // ===== Date display =====
   document.getElementById('today-date').textContent = new Date().toLocaleDateString('ja-JP', {
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
   });
 
-  // ===== Helpers =====
   function addDays(d, n) {
     const r = new Date(d); r.setDate(r.getDate() + n); return r;
   }
-  function formatDate(d) { return `${d.getMonth()+1}月${d.getDate()}日`; }
+  function formatDate(d) { return (d.getMonth()+1) + '月' + d.getDate() + '日'; }
   function today() {
     const d = new Date(); d.setHours(0,0,0,0); return d;
   }
 
-  // ===== Toggle medicine =====
   function toggleMed(id, slot) {
     state.checked[id] = !state.checked[id];
     renderMed(id);
@@ -502,12 +495,11 @@
     }
   }
 
-  // ===== Progress =====
   function updateProgress() {
     const checkedCount = Object.values(state.checked).filter(Boolean).length;
     const pct = Math.round((checkedCount / TOTAL) * 100);
 
-    document.getElementById('progress-text').textContent = `${checkedCount} / ${TOTAL} 完了`;
+    document.getElementById('progress-text').textContent = checkedCount + ' / ' + TOTAL + ' 完了';
     document.getElementById('progress-fill').style.width = pct + '%';
 
     const allMedsDone = Object.keys(icons).every(id => state.checked[id]);
@@ -530,7 +522,6 @@
     slotEl.style.borderColor = done ? colors[slot] : 'transparent';
   }
 
-  // ===== Patch =====
   function isPatchOk() {
     if (!state.patchLastChanged) return false;
     const lastChanged = new Date(state.patchLastChanged);
@@ -541,7 +532,6 @@
     const t = today();
     state.patchLastChanged = t.toISOString();
     saveState();
-
     renderPatch();
     updateProgress();
   }
@@ -554,7 +544,6 @@
     const t = today();
 
     if (!state.patchLastChanged) {
-      // First time
       card.className = 'patch-card needs-change';
       alertEl.className = 'alert warn';
       alertEl.textContent = '⚠️ 今日は張り替えの日です！';
@@ -576,7 +565,7 @@
       btn.textContent = '✓ 完了';
       btn.className = 'patch-btn done';
       btn.onclick = null;
-      nextInfo.innerHTML = `次の張り替えは <strong>${formatDate(nextChange)}</strong> です 📅`;
+      nextInfo.innerHTML = '次の張り替えは <strong>' + formatDate(nextChange) + '</strong> です 📅';
       nextInfo.style.display = 'block';
     } else if (needsChange) {
       card.className = 'patch-card needs-change';
@@ -589,7 +578,7 @@
     } else {
       card.className = 'patch-card ok';
       alertEl.className = 'alert';
-      alertEl.textContent = `次の張り替え：${formatDate(nextChange)}`;
+      alertEl.textContent = '次の張り替え：' + formatDate(nextChange);
       btn.textContent = '張り替えた！';
       btn.className = 'patch-btn active';
       btn.onclick = handlePatchChange;
@@ -597,7 +586,6 @@
     }
   }
 
-  // ===== Install banner (iOS Safari only) =====
   function showInstallBanner() {
     const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent);
     const isStandalone = window.navigator.standalone === true;
@@ -611,9 +599,7 @@
     localStorage.setItem('banner_dismissed', '1');
   }
 
-  // ===== Initialize =====
   (function init() {
-    // Restore checked states
     Object.keys(icons).forEach(id => {
       if (state.checked[id]) renderMed(id);
     });
